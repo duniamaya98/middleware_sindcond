@@ -44,7 +44,9 @@ module.exports={
             }
             const client = mqtt.connect(options)
             client.subscribe((`organization/DAS/application/${data.type}/node/${data.devEUI}/rx`),(err)=>{
+                // client.subscribe((`organization/DAS/application/gas-meter/node/0800000000000024/rx`),(err)=>{
                 if (err) {
+                    client.end()
                     reject(connection);
                 }else{
                     interval=setInterval(()=>{
@@ -60,6 +62,7 @@ module.exports={
             client.on('message', (topic, message, packet) => {
                 clearInterval(interval)
                 resolve(message.toString())
+                client.end()
             });
         })
     }
