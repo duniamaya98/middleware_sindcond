@@ -51,7 +51,7 @@ module.exports={
                     client.end()
                     reject(connection);
                 }else{
-                    client.publish(`organization/DAS/application/${data.type}/node/${data.devEUI}/tx`,JSON.stringify({"confirmed":false,"devEUI":"0800000040000202","fPort":111,"data":valve}))
+                    client.publish(`organization/DAS/application/${data.type}/node/${data.devEUI}/tx`,JSON.stringify({"confirmed":false,"devEUI":data.devEUI,"fPort":111,"data":valve}))
                     interval=setInterval(()=>{
                         i++
                         if(i==15) {

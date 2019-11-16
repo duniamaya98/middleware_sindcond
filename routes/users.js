@@ -5,6 +5,8 @@ const controllerDownlink = require('../controllers/controllerDownlinks')
 /* GET users listing. */
 router
     .post('/nodes', controllerUplink.getUplinks)
+    .post('/check', controllerUplink.nonCronUplinks)
     .post('/valve',controllerDownlink.valve)
+    .post('/topup',controllerDownlink.topup)
 
 module.exports = router;

@@ -65,5 +65,37 @@ module.exports={
                 client.end()
             });
         })
+    },
+    getUplinknon:(data)=>{
+        let i=1
+        let interval = null
+        return new Promise((resolve, reject)=>{
+
+            if (data.type==undefined || data.devEUI==undefined) {
+                reject(empty)
+            }
+            const client = mqtt.connect(options)
+            client.subscribe((`organization/DAS/application/${data.type}/node/${data.devEUI}/rx`),(err)=>{
+                // client.subscribe((`organization/DAS/application/gas-meter/node/0800000000000024/rx`),(err)=>{
+                if (err) {
+                    client.end()
+                    reject(connection);
+                }else{
+                    interval=setInterval(()=>{
+                        i++
+                        if(i==15) {
+                            reject(notfound);
+                            clearInterval(interval)
+                            i=1;
+                        }
+                    },1000)
+                }
+            })
+            client.on('message', (topic, message, packet) => {
+                clearInterval(interval)
+                resolve(message.toString())
+                client.end()
+            });
+        })
     }
 }
