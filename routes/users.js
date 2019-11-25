@@ -8,5 +8,7 @@ router
     .post('/check', controllerUplink.nonCronUplinks)
     .post('/valve',controllerDownlink.valve)
     .post('/topup',controllerDownlink.topup)
+    .post('/interval',controllerDownlink.interval)
+    .post('/setmeter',controllerDownlink.setMeter)
 
 module.exports = router;
