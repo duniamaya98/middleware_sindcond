@@ -49,8 +49,10 @@ module.exports={
             }
             const regex = /\d+/g
             intervalAlat = data.interval
-            console.log(intervalAlat)
+            intervalAlat = intervalAlat.toString()
+            console.log(typeof(intervalAlat))
             cekRegex = intervalAlat.match(regex)
+            console.log(cekRegex)
             if (cekRegex==null) {
                 return reject({
                     headers:{

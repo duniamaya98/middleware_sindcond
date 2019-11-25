@@ -48,7 +48,8 @@ module.exports={
 
             const regex = /\d+/g
             set_meter = data.set_meter
-            console.log(set_meter)
+            set_meter = set_meter.toString()
+            console.log(data)
             cekRegex = set_meter.match(regex)
             if (cekRegex==null) {
                 return reject({
