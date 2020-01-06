@@ -10,5 +10,5 @@ router
     .post('/topup',controllerDownlink.topup)
     .post('/interval',controllerDownlink.interval)
     .post('/setmeter',controllerDownlink.setMeter)
-
+    .post('/gateway',controllerUplink.gateway)
 module.exports = router;

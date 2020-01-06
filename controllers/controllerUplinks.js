@@ -1,5 +1,5 @@
 const modelUplinks = require('../models/modelUplinks')
-
+const modelgateway = require('../models/gateway')
 module.exports={
     getUplinks : (req, res) =>{
         const data = req.body
@@ -10,6 +10,12 @@ module.exports={
         // }
         
         modelUplinks.getUplink(data)
+            .then((result)=>res.status(200).json(JSON.parse(result)))
+            .catch((err)=>res.status(err.headers.status).json(err))
+    },
+    gateway : (req, res) =>{
+        const data = req.body
+        modelgateway.gateway(data)
             .then((result)=>res.status(200).json(JSON.parse(result)))
             .catch((err)=>res.status(err.headers.status).json(err))
     },
