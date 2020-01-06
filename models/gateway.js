@@ -34,12 +34,12 @@ const connection ={
     }
 }
 module.exports={
-    gateway:(data)=>{
+    gateway:(gateway)=>{
         let i=1
         let interval = null
         return new Promise((resolve, reject)=>{
             const client = mqtt.connect(options)
-            client.subscribe((`gateway/000080029c1af203/stats`),(err)=>{
+            client.subscribe((`gateway/${gateway}/stats`),(err)=>{
                 // client.subscribe((`organization/DAS/application/gas-meter/node/0800000000000024/rx`),(err)=>{
                 if (err) {
                     client.end()
