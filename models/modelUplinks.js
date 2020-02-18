@@ -42,6 +42,7 @@ module.exports={
             if (data.type==undefined || data.devEUI==undefined) {
                 reject(empty)
             }
+            data.devEUI = (data.devEUI).toLowerCase()
             const client = mqtt.connect(options)
             client.subscribe((`organization/DAS/application/${data.type}/node/${data.devEUI}/rx`),(err)=>{
                 // client.subscribe((`organization/DAS/application/gas-meter/node/0800000000000024/rx`),(err)=>{
