@@ -8,7 +8,6 @@ module.exports={
         //     console.log('AWD');
                 
         // }
-        
         modelUplinks.getUplink(data)
             .then((result)=>res.status(200).json(JSON.parse(result)))
             .catch((err)=>res.status(err.headers.status).json(err))

@@ -33,22 +33,17 @@ const connection ={
         message:'Connection closed'
     }
 }
-module.exports={
-    gateway:(gateway)=>{
+module.exports={   
+    gateway:(data)=>{
         let i=1
         let interval = null
         return new Promise((resolve, reject)=>{
             const client = mqtt.connect(options)
-            client.subscribe((`gateway/${gateway}/stats`),(err)=>{
-                // client.subscribe((`organization/DAS/application/gas-meter/node/0800000000000024/rx`),(err)=>{
-                if (err) {
-                    client.end()
-                    reject(connection);
-                }
-            })
+            client.subscribe(`gateway/7276ff00450101f9/stats`)
 
             client.on('message', (topic, message, packet) => {
                 clearInterval(interval)
+                console.log(message.toString())
                 resolve(message.toString())
                 client.end()
             }); 
@@ -59,7 +54,7 @@ module.exports={
                 } catch (error) {
                     reject({headers:{status:500},body:{messages:'request timout'}})
                 }
-                },15000)
+            },35000)
         })
     }
 }
