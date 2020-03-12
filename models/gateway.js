@@ -71,7 +71,7 @@ module.exports = {
       console.log(data);
       const client = mqtt.connect(options);
       // 000080029c1af203
-      client.subscribe(`gateway/${data.gatewayId.trim()}/pull`, err => {
+      client.subscribe(`gateway/${data.gatewayId.trim()}/rx`, err => {
         // client.subscribe((`organization/DAS/application/gas-meter/node/0800000000000024/rx`),(err)=>{
         if (err) {
           client.end();
