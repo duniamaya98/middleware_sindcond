@@ -52,10 +52,12 @@ module.exports = {
             if (err) {
               client.end();
               reject(connection);
+              console.log(err);
             } else {
               interval = setInterval(() => {
                 i++;
                 if (i == 15) {
+                  console.log("notfound");
                   reject(notfound);
                   clearInterval(interval);
                   i = 1;
