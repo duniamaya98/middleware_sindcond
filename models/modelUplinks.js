@@ -43,6 +43,7 @@ module.exports = {
           reject(empty);
         }
         data.devEUI = data.devEUI.toLowerCase();
+        console.log("devEui = ", data.devEUI);
         const client = mqtt.connect(options);
         client.subscribe(
           `organization/DAS/application/${data.type}/node/${data.devEUI}/rx`,
