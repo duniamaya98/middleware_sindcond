@@ -43,29 +43,28 @@ module.exports = {
           reject(empty);
         }
         data.devEUI = data.devEUI.toLowerCase();
-        console.log("devEui = ", data.devEUI);
+        data.devEUI = data.devEUI.split(" ").join("");
+        let url = `organization/DAS/application/${data.type}/node/${data.devEUI}/rx`;
+        console.log(url);
         const client = mqtt.connect(options);
-        client.subscribe(
-          `organization/DAS/application/${data.type}/node/${data.devEUI}/rx`,
-          err => {
-            // client.subscribe((`organization/DAS/application/gas-meter/node/0800000000000024/rx`),(err)=>{
-            if (err) {
-              client.end();
-              reject(connection);
-              console.log(err);
-            } else {
-              interval = setInterval(() => {
-                i++;
-                if (i == 15) {
-                  console.log("notfound");
-                  reject(notfound);
-                  clearInterval(interval);
-                  i = 1;
-                }
-              }, 1000);
-            }
+        client.subscribe(url, err => {
+          // client.subscribe((`organization/DAS/application/gas-meter/node/0800000000000024/rx`),(err)=>{
+          if (err) {
+            client.end();
+            reject(connection);
+            console.log(err);
+          } else {
+            interval = setInterval(() => {
+              i++;
+              if (i == 15) {
+                console.log("notfound");
+                reject(notfound);
+                clearInterval(interval);
+                i = 1;
+              }
+            }, 1000);
           }
-        );
+        });
         client.on("message", (topic, message, packet) => {
           clearInterval(interval);
           resolve(message.toString());
