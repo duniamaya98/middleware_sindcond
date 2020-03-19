@@ -1,5 +1,7 @@
-const mqtt = require("mqtt");
-require("dotenv").config();
+// const mqtt = require("mqtt");
+// require("dotenv").config();
+const mqtt = require("../configs/mqtt");
+
 var options = {
   port: process.env.MQTT_PORT,
   host: process.env.MQTT_HOST,
@@ -34,6 +36,47 @@ const connection = {
   }
 };
 module.exports = {
+  // getUplink: data => {
+  //   let i = 1;
+  //   let interval = null;
+  //   return new Promise((resolve, reject) => {
+  //     try {
+  //       if (data.type == undefined || data.devEUI == undefined) {
+  //         reject(empty);
+  //       }
+  //       data.devEUI = data.devEUI.toLowerCase();
+  //       data.devEUI = data.devEUI.split(" ").join("");
+  //       let url = `organization/DAS/application/${data.type}/node/${data.devEUI}/rx`;
+  //       console.log(url);
+  //       const client = mqtt.connect(options);
+  //       client.subscribe(url, err => {
+  //         // client.subscribe((`organization/DAS/application/gas-meter/node/0800000000000024/rx`),(err)=>{
+  //         if (err) {
+  //           client.end();
+  //           reject(connection);
+  //           console.log(err);
+  //         } else {
+  //           interval = setInterval(() => {
+  //             i++;
+  //             if (i == 15) {
+  //               console.log("notfound");
+  //               reject(notfound);
+  //               clearInterval(interval);
+  //               i = 1;
+  //             }
+  //           }, 1000);
+  //         }
+  //       });
+  //       client.on("message", (topic, message, packet) => {
+  //         clearInterval(interval);
+  //         resolve(message.toString());
+  //         client.end();
+  //       });
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   });
+  // },
   getUplink: data => {
     let i = 1;
     let interval = null;
@@ -46,11 +89,10 @@ module.exports = {
         data.devEUI = data.devEUI.split(" ").join("");
         let url = `organization/DAS/application/${data.type}/node/${data.devEUI}/rx`;
         console.log(url);
-        const client = mqtt.connect(options);
-        client.subscribe(url, err => {
-          // client.subscribe((`organization/DAS/application/gas-meter/node/0800000000000024/rx`),(err)=>{
+        // const client = mqtt.connect(options);
+        mqtt.subscribe(url, err => {
           if (err) {
-            client.end();
+            // mqtt.end();
             reject(connection);
             console.log(err);
           } else {
@@ -65,48 +107,48 @@ module.exports = {
             }, 1000);
           }
         });
-        client.on("message", (topic, message, packet) => {
+        mqtt.on("message", (topic, message, packet) => {
           clearInterval(interval);
           resolve(message.toString());
-          client.end();
+          mqtt.unsubscribe(url);
+          mqtt.end();
+          mqtt.reconnect();
         });
       } catch (error) {
         console.log(error);
       }
     });
-  },
-  getUplinknon: data => {
-    let i = 1;
-    let interval = null;
-    return new Promise((resolve, reject) => {
-      if (data.type == undefined || data.devEUI == undefined) {
-        reject(empty);
-      }
-      const client = mqtt.connect(options);
-      client.subscribe(
-        `organization/DAS/application/${data.type}/node/${data.devEUI}/rx`,
-        err => {
-          // client.subscribe((`organization/DAS/application/gas-meter/node/0800000000000024/rx`),(err)=>{
-          if (err) {
-            client.end();
-            reject(connection);
-          } else {
-            interval = setInterval(() => {
-              i++;
-              if (i == 15) {
-                reject(notfound);
-                clearInterval(interval);
-                i = 1;
-              }
-            }, 1000);
-          }
-        }
-      );
-      client.on("message", (topic, message, packet) => {
-        clearInterval(interval);
-        resolve(message.toString());
-        client.end();
-      });
-    });
   }
+  // getUplinknon: data => {
+  //   let i = 1;
+  //   let interval = null;
+  //   return new Promise((resolve, reject) => {
+  //     if (data.type == undefined || data.devEUI == undefined) {
+  //       reject(empty);
+  //     }
+  //     mqtt.subscribe(
+  //       `organization/DAS/application/${data.type}/node/${data.devEUI}/rx`,
+  //       err => {
+  //         // mqtt.subscribe((`organization/DAS/application/gas-meter/node/0800000000000024/rx`),(err)=>{
+  //         if (err) {
+  //           reject(connection);
+  //         } else {
+  //           interval = setInterval(() => {
+  //             i++;
+  //             if (i == 15) {
+  //               reject(notfound);
+  //               clearInterval(interval);
+  //               i = 1;
+  //             }
+  //           }, 1000);
+  //         }
+  //       }
+  //     );
+  //     mqtt.on("message", (topic, message, packet) => {
+  //       clearInterval(interval);
+  //       resolve(message.toString());
+  //       mqtt.end();
+  //     });
+  //   });
+  // }
 };
