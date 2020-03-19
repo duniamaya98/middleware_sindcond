@@ -111,8 +111,8 @@ module.exports = {
           clearInterval(interval);
           resolve(message.toString());
           mqtt.unsubscribe(url);
-          mqtt.end();
-          mqtt.reconnect();
+          // mqtt.end();
+          // mqtt.reconnect();
         });
       } catch (error) {
         console.log(error);
