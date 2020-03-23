@@ -5,8 +5,8 @@ module.exports = {
     const data = req.body;
     modelUplinks
       .getUplink(data)
-      .then(result => res.status(result.status).json(result))
-      .catch(err => console.log(err));
+      .then(result => res.json(result))
+      .catch(err => res.json(err));
   },
   gateway: (req, res) => {
     const data = req.body;
