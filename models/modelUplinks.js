@@ -1,6 +1,6 @@
-// const mqtt = require("mqtt");
-// require("dotenv").config();
-const mqtt = require("../configs/mqtt");
+const mqtt = require("mqtt");
+require("dotenv").config();
+// const mqtt = require("../configs/mqtt");
 
 var options = {
   port: process.env.MQTT_PORT,
@@ -9,32 +9,32 @@ var options = {
   username: process.env.MQTT_USERNAME,
   password: process.env.MQTT_PASSWORD
 };
-// const notfound = {
-//   headers: {
-//     status: 404
-//   },
-//   body: {
-//     message: "Not Found"
-//   }
-// };
+const notfound = {
+  headers: {
+    status: 404
+  },
+  body: {
+    message: "Not Found"
+  }
+};
 
-// const empty = {
-//   headers: {
-//     status: 500
-//   },
-//   body: {
-//     message: "field cannot empty"
-//   }
-// };
+const empty = {
+  headers: {
+    status: 500
+  },
+  body: {
+    message: "field cannot empty"
+  }
+};
 
-// const connection = {
-//   headers: {
-//     status: 500
-//   },
-//   body: {
-//     message: "Connection closed"
-//   }
-// };
+const connection = {
+  headers: {
+    status: 500
+  },
+  body: {
+    message: "Connection closed"
+  }
+};
 module.exports = {
   getUplink: data => {
     let i = 1;
@@ -53,12 +53,14 @@ module.exports = {
           // client.subscribe((`organization/DAS/application/gas-meter/node/0800000000000024/rx`),(err)=>{
           if (err) {
             client.end();
+            // client.reconnect();
             reject(connection);
             console.log(err);
           } else {
             interval = setInterval(() => {
               i++;
               if (i == 15) {
+                client.end();
                 console.log("notfound");
                 reject(notfound);
                 clearInterval(interval);
