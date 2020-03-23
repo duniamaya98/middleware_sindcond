@@ -96,7 +96,7 @@ module.exports = {
         });
         mqtt.on("message", (topic, message, packet) => {
           newData.push(JSON.parse(message.toString()));
-          mqtt.unsubscribe(topic.toString());
+          // mqtt.unsubscribe(topic.toString());
           if (parseInt(newData.length) == parseInt(flag)) {
             resolve({
               status: 200,
