@@ -2,13 +2,13 @@
 // require("dotenv").config();
 const mqtt = require("../configs/mqtt");
 
-// var options = {
-//   port: process.env.MQTT_PORT,
-//   host: process.env.MQTT_HOST,
-//   protocol: process.env.MQTT_PROTOCOL,
-//   username: process.env.MQTT_USERNAME,
-//   password: process.env.MQTT_PASSWORD
-// };
+var options = {
+  port: process.env.MQTT_PORT,
+  host: process.env.MQTT_HOST,
+  protocol: process.env.MQTT_PROTOCOL,
+  username: process.env.MQTT_USERNAME,
+  password: process.env.MQTT_PASSWORD
+};
 // const notfound = {
 //   headers: {
 //     status: 404
