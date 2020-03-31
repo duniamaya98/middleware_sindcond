@@ -6,6 +6,7 @@
     "start": "nodemon ./bin/www"
   },
   "dependencies": {
+    "axios": "^0.19.2",
     "cookie-parser": "~1.4.4",
     "cors": "^2.8.5",
     "debug": "~2.6.9",
@@ -16,6 +17,9 @@
     "jade": "~1.11.0",
     "morgan": "~1.9.1",
     "mqtt": "^3.0.0",
-    "nodemon": "^1.19.4"
+    "mysql2": "^2.1.0",
+    "nodemon": "^1.19.4",
+    "redis": "^3.0.2",
+    "sequelize": "^5.21.5"
   }
 }

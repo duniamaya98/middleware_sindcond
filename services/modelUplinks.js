@@ -1,6 +1,6 @@
 const mqtt = require("mqtt");
 require("dotenv").config();
-// const mqtt = require("../configs/mqtt");
+// const mqtt = require("../config/mqtt");
 
 var options = {
   port: process.env.MQTT_PORT,

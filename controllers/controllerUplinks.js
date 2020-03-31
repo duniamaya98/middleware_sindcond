@@ -1,5 +1,5 @@
-const modelUplinks = require("../models/modelUplinks");
-const modelgateway = require("../models/gateway");
+const modelUplinks = require("../services/modelUplinks");
+const modelgateway = require("../services/gateway");
 module.exports = {
   getUplinks: (req, res) => {
     const data = req.body;

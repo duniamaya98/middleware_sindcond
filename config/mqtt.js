@@ -15,7 +15,7 @@ client.on("connect", () => {
 });
 client.on("offline", () => {
   console.log("offline");
-  client.reconnect();
+  // client.reconnect();
 });
 
 module.exports = client;
