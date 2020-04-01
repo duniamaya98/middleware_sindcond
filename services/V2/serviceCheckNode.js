@@ -20,7 +20,9 @@ module.exports = {
           }
         });
         mqtt.on("message", (topic, message, packet) => {
-          if (topic.toString() == data.topic) {
+          let raw = topic.toString().split("/");
+          let input = data.topic.split("/");
+          if (raw[raw.length - 2] == input[input.length - 2]) {
             mqtt.unsubscribe(data.topic);
             resolve({
               status: 200,
