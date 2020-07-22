@@ -3,7 +3,7 @@
 const mqtt = require("../../config/mqtt");
 
 module.exports = {
-  SvcCheckNode: data => {
+  SvcCheckNode: (data) => {
     return new Promise((resolve, reject) => {
       try {
         // `organization/DAS/application/Pressure_Sensor_3rdParty/node/009bb58ae03e2285/rx`
@@ -13,7 +13,7 @@ module.exports = {
             console.log(err);
             reject({
               status: 200,
-              message: JSON.stringify(err)
+              message: JSON.stringify(err),
             });
           } else {
             console.log(granted);
@@ -26,7 +26,7 @@ module.exports = {
             mqtt.unsubscribe(data.topic);
             resolve({
               status: 200,
-              message: topic.toString()
+              message: topic.toString(),
             });
           }
         });
@@ -34,5 +34,5 @@ module.exports = {
         console.log(error);
       }
     });
-  }
+  },
 };
