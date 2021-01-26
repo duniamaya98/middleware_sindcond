@@ -3,10 +3,10 @@ var router = express.Router();
 const controllerUplink = require("../controllers/controllerUplinks");
 const controllerDownlink = require("../controllers/controllerDownlinks");
 const {
-  controllerSubscribe
+  controllerSubscribe,
 } = require("../controllers/V2/controllerSubscribe");
 const {
-  controllerCheckNode
+  controllerCheckNode,
 } = require("../controllers/V2/controllerCheckNode");
 /* GET users listing. */
 router
@@ -16,6 +16,8 @@ router
   .post("/topup", controllerDownlink.topup)
   .post("/interval", controllerDownlink.interval)
   .post("/setmeter", controllerDownlink.setMeter)
+  .post("/utc", controllerDownlink.setUtc)
+  .post("/pulse", controllerDownlink.setPulse)
   .post("/gateway", controllerUplink.gateway)
 
   .post("/subscribe", controllerSubscribe)
