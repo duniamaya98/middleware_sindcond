@@ -77,7 +77,13 @@ function onError(error) {
 }
 
 const { SvcMessages } = require("../services/V2/serviceMessagesSub");
-SvcMessages();
+const { SvcSubscribeRunFirst } = require("../services/V2/serviceSubscribe");
+setTimeout(() => {
+  SvcMessages();
+}, 120000);
+setTimeout(() => {
+  SvcSubscribeRunFirst();
+}, 5000);
 /**
  * Event listener for HTTP server "listening" event.
  */
