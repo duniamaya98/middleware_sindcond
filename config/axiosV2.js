@@ -4,7 +4,7 @@ const instance1 = axios.create({
   timeout: 30000,
 });
 const instance2 = axios.create({
-  baseURL: "http://127.0.0.1:3020/sindcond/",
+  baseURL: "http://127.0.0.1:3030/sindcond/",
   timeout: 30000,
 });
 
