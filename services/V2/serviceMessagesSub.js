@@ -3,6 +3,7 @@
 const mqtt = require("../../config/mqtt");
 var mysql = require("mysql");
 const axios = require("../../config/axios");
+const axios_reatry = require("axios-retry");
 const { instance1, instance2 } = require("../../config/axiosV2");
 module.exports = {
   SvcMessages: (data) => {
@@ -38,6 +39,12 @@ module.exports = {
                   return "ok";
                 } else {
                   if (results[0].id % 2 == 1) {
+                    axios_reatry(instance1, {
+                      retries: 3,
+                      retryDelay: (retryCount) => {
+                        return retryCount * 1000;
+                      },
+                    });
                     instance1({ method: "POST", url: "node/rx", data: payload })
                       .then((result) => {
                         console.log(result.data, " ", deveui);
@@ -48,6 +55,12 @@ module.exports = {
                         return "error";
                       });
                   } else {
+                    axios_reatry(instance2, {
+                      retries: 3,
+                      retryDelay: (retryCount) => {
+                        return retryCount * 1000;
+                      },
+                    });
                     instance2({ method: "POST", url: "node/rx", data: payload })
                       .then((result) => {
                         console.log(result.data, " ", deveui);
