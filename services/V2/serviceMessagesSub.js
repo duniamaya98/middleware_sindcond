@@ -69,9 +69,10 @@ module.exports = {
             deveui: deveui,
             type: "gateway",
           };
-          axios({ method: "POST", url: "gateway/rx", data: payload })
-            .then((result) => console.log(result.data))
-            .catch((err) => console.log(err));
+          return "ok";
+          // axios({ method: "POST", url: "gateway/rx", data: payload })
+          //   .then((result) => console.log(result.data))
+          //   .catch((err) => console.log(err));
         }
       });
     } catch (error) {
