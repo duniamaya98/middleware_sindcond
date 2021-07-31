@@ -27,7 +27,7 @@ module.exports = {
           });
           connection.connect();
           connection.query(
-            `SELECT * FROM weiots_node_lists WHERE devEUI='${deveui}'`,
+            `SELECT id FROM weiots_node_lists WHERE devEUI='${deveui}'`,
             function (error, results, fields) {
               if (error) {
                 console.log(error);
