@@ -2,12 +2,27 @@ const modeldownlinkValve = require("../services/modelValve");
 const modeldownlinkTopup = require("../services/modelPrepayment");
 const modeldownlinkinterval = require("../services/modelInterval");
 const modeldownlinkmeter = require("../services/modelAdjust");
+const { Svcbrightness } = require("../services/modelbrightness");
 const { setUtc } = require("../services/modelUtc");
 const { setPulse } = require("../services/modelPulse");
 const hex64 = require("hex64");
 
 const moment = require("moment");
 module.exports = {
+  brightness: (req, res) => {
+    const value = req.params.value ? parseFloat(req.params.value) : 0;
+    const devEui = req.params.devEui;
+    const type = req.params.type;
+
+    if (value < 0) {
+      value = 0;
+    } else if (value > 100) {
+      value = 100;
+    }
+    Svcbrightness(value, devEui, type)
+      .then((result) => res.status(200).json(result))
+      .catch((err) => res.status(500).json(err));
+  },
   valve: (req, res) => {
     const data = req.body;
     console.log(data);

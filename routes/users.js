@@ -13,6 +13,7 @@ router
   .post("/nodes", controllerUplink.getUplinks)
   .post("/check", controllerUplink.nonCronUplinks)
   .post("/valve", controllerDownlink.valve)
+  .post("/brightness/:value/:devEui/:type", controllerDownlink.brightness)
   .post("/topup", controllerDownlink.topup)
   .post("/interval", controllerDownlink.interval)
   .post("/setmeter", controllerDownlink.setMeter)
