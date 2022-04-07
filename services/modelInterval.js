@@ -1,5 +1,8 @@
 const mqtt = require("mqtt");
 const hex64 = require("hex64");
+let hexToBase64 = (data) => {
+  return Buffer.from(data, "hex").toString("base64");
+};
 require("dotenv").config();
 var options = {
   port: process.env.MQTT_PORT,
@@ -70,7 +73,7 @@ module.exports = {
         intervalAlat = parseInt(intervalAlat);
         intervalAlat = intervalAlat.toString(16);
         intervalAlat = ("00000000" + intervalAlat.toString(16)).slice(-8);
-        intervalAlat = hex64.toBase64(intervalAlat);
+        intervalAlat = hexToBase64(intervalAlat);
       }
       if (data.typeId === 5 || data.typeId === 8 || data.typeId === 9) {
         function Encoder(object, port) {
@@ -109,7 +112,7 @@ module.exports = {
         });
         const buffer = Buffer.from(encoded);
         const hexString = buffer.toString("hex");
-        intervalAlat = hex64.toBase64(hexString);
+        intervalAlat = hexToBase64(hexString);
       }
       const client = mqtt.connect(options);
       client.subscribe(
