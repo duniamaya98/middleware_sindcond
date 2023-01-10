@@ -79,6 +79,7 @@ function onError(error) {
 const { SvcMessages } = require("../services/V2/serviceMessagesSub");
 const { SvcSubscribeRunFirst } = require("../services/V2/serviceSubscribe");
 setTimeout(() => {
+  console.log("start");
   SvcMessages();
 }, 120000);
 setTimeout(() => {

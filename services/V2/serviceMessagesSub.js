@@ -12,7 +12,6 @@ module.exports = {
   SvcMessages: (data) => {
     try {
       mqtt.on("message", async (topic, message, packet) => {
-        return console.log(topic.toString());
         let raw = topic.toString().split("/");
         if (raw[0] == "organization" && raw[raw.length - 1] == "rx") {
           deveui = raw[raw.length - 2];
@@ -21,43 +20,15 @@ module.exports = {
             deveui: deveui,
             type: "node",
           };
-          const rndInt = randomIntFromInterval(1, 3);
-          switch (parseInt(rndInt)) {
-            case 1:
-              await instance1({ method: "POST", url: "node/rx", data: payload })
-                .then((result) => {
-                  console.log(result.data, " ", deveui);
-                  return "ok";
-                })
-                .catch((err) => {
-                  console.log(err);
-                  return "error";
-                });
-              break;
-            case 2:
-              await instance2({ method: "POST", url: "node/rx", data: payload })
-                .then((result) => {
-                  console.log(result.data, " ", deveui);
-                  return "ok";
-                })
-                .catch((err) => {
-                  console.log(err);
-                  return "error";
-                });
-              break;
-
-            default:
-              await instance3({ method: "POST", url: "node/rx", data: payload })
-                .then((result) => {
-                  console.log(result.data, " ", deveui);
-                  return "ok";
-                })
-                .catch((err) => {
-                  console.log(err);
-                  return "error";
-                });
-              break;
-          }
+          await instance1({ method: "POST", url: "node/rx", data: payload })
+            .then((result) => {
+              console.log(result.data, " ", deveui);
+              return "ok";
+            })
+            .catch((err) => {
+              console.log(err);
+              return "error";
+            });
         } else if (raw[0] == "gateway") {
           deveui = raw[raw.length - 2];
           const payload = {
@@ -65,10 +36,13 @@ module.exports = {
             deveui: deveui,
             type: "gateway",
           };
-          return "ok";
-          // axios({ method: "POST", url: "gateway/rx", data: payload })
-          //   .then((result) => console.log(result.data))
-          //   .catch((err) => console.log(err));
+          instance1({
+            method: "POST",
+            url: "gateway/rx",
+            data: payload,
+          })
+            .then((result) => console.log(result.data))
+            .catch((err) => console.log(err));
         }
       });
     } catch (error) {
