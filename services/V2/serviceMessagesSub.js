@@ -12,7 +12,7 @@ module.exports = {
   SvcMessages: (data) => {
     try {
       mqtt.on("message", async (topic, message, packet) => {
-        console.log(topic.toString());
+        return console.log(topic.toString());
         let raw = topic.toString().split("/");
         if (raw[0] == "organization" && raw[raw.length - 1] == "rx") {
           deveui = raw[raw.length - 2];

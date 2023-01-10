@@ -30,7 +30,6 @@ module.exports = {
   SvcSubscribeRunFirst: (data) => {
     return new Promise((resolve, reject) => {
       try {
-        // // `organization/DAS/application/Pressure_Sensor_3rdParty/node/009bb58ae03e2285/rx`
         mqtt.subscribe(`organization/#`, (err, granted) => {
           if (err) {
             console.log(err);
