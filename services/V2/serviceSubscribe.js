@@ -31,10 +31,7 @@ module.exports = {
     return new Promise((resolve, reject) => {
       try {
         mqtt.subscribe(
-          [
-            // `organization/#`,
-            `gateway/#`,
-          ],
+          [`organization/loraserver/application/#`, `gateway/#`],
           (err, granted) => {
             if (err) {
               console.log(err);
