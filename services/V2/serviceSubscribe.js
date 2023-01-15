@@ -30,21 +30,27 @@ module.exports = {
   SvcSubscribeRunFirst: (data) => {
     return new Promise((resolve, reject) => {
       try {
-        mqtt.subscribe([``, `gateway/#`], (err, granted) => {
-          if (err) {
-            console.log(err);
-            reject({
-              status: 200,
-              message: JSON.stringify(err),
-            });
-          } else {
-            console.log(granted);
-            resolve({
-              status: 200,
-              message: granted,
-            });
+        mqtt.subscribe(
+          [
+            // `organization/#`,
+            `gateway/#`,
+          ],
+          (err, granted) => {
+            if (err) {
+              console.log(err);
+              reject({
+                status: 200,
+                message: JSON.stringify(err),
+              });
+            } else {
+              console.log(granted);
+              resolve({
+                status: 200,
+                message: granted,
+              });
+            }
           }
-        });
+        );
       } catch (error) {
         console.log(error);
       }
