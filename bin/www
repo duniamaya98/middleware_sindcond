@@ -78,13 +78,12 @@ function onError(error) {
 
 const { SvcMessages } = require("../services/V2/serviceMessagesSub");
 const { SvcSubscribeRunFirst } = require("../services/V2/serviceSubscribe");
+SvcMessages();
 setTimeout(() => {
   console.log("start");
-  SvcMessages();
 }, 120000);
-setTimeout(() => {
-  SvcSubscribeRunFirst();
-}, 2000);
+setTimeout(() => {}, 2000);
+SvcSubscribeRunFirst();
 /**
  * Event listener for HTTP server "listening" event.
  */

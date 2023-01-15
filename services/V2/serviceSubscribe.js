@@ -30,7 +30,7 @@ module.exports = {
   SvcSubscribeRunFirst: (data) => {
     return new Promise((resolve, reject) => {
       try {
-        mqtt.subscribe(`organization/#`, (err, granted) => {
+        mqtt.subscribe([``, `gateway/#`], (err, granted) => {
           if (err) {
             console.log(err);
             reject({
