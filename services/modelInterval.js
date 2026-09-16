@@ -1,16 +1,14 @@
 const mqtt = require("mqtt");
-const hex64 = require("hex64");
-let hexToBase64 = (data) => {
-  return Buffer.from(data, "hex").toString("base64");
-};
 require("dotenv").config();
-var options = {
+
+const options = {
   port: process.env.MQTT_PORT,
   host: process.env.MQTT_HOST,
   protocol: process.env.MQTT_PROTOCOL,
   username: process.env.MQTT_USERNAME,
   password: process.env.MQTT_PASSWORD,
 };
+
 const notfound = {
   headers: {
     status: 404,
@@ -29,6 +27,15 @@ const empty = {
   },
 };
 
+const badInput = {
+  headers: {
+    status: 400,
+  },
+  body: {
+    message: "interval must be a positive integer in seconds",
+  },
+};
+
 const connection = {
   headers: {
     status: 500,
@@ -37,116 +44,119 @@ const connection = {
     message: "Connection closed",
   },
 };
+
+/**
+ * FPort 113:
+ *
+ * Reporting interval = UINT32 Big Endian
+ * Unit = seconds
+ *
+ * Example:
+ *
+ * 300  = 0000012C
+ * 600  = 00000258
+ * 1800 = 00000708
+ * 3600 = 00000E10
+ */
+function encodeReportingInterval(seconds) {
+  if (
+    !Number.isInteger(seconds) ||
+    seconds <= 0 ||
+    seconds > 0xffffffff
+  ) {
+    throw new RangeError("interval out of UINT32 range");
+  }
+
+  const buffer = Buffer.alloc(4);
+
+  buffer.writeUInt32BE(seconds, 0);
+
+  return {
+    hex: buffer.toString("hex"),
+    base64: buffer.toString("base64"),
+  };
+}
+
 module.exports = {
   adjustInterval: (data) => {
-    let i = 1;
-    let interval = null;
-    let intervalAlat = "";
-    let cekRegex;
     return new Promise((resolve, reject) => {
       if (
-        data.type == undefined ||
+        data == null ||
+        (data.applicationId == undefined && data.type == undefined) ||
         data.devEUI == undefined ||
         data.interval == undefined
       ) {
-        reject(empty);
+        return reject(empty);
       }
-      const regex = /\d+/g;
-      intervalAlat = data.interval;
-      intervalAlat = intervalAlat.toString();
-      cekRegex = intervalAlat.match(regex);
 
-      if (cekRegex == null) {
-        return reject({
-          headers: {
-            status: 500,
-          },
-          body: {
-            message: "bad input",
-          },
-        });
-      } else {
-        intervalAlat = "";
-        cekRegex.forEach((val) => {
-          intervalAlat += val;
-        });
-        intervalAlat = parseInt(intervalAlat);
-        intervalAlat = intervalAlat.toString(16);
-        intervalAlat = ("00000000" + intervalAlat.toString(16)).slice(-8);
-        intervalAlat = hexToBase64(intervalAlat);
+      const intervalSeconds = Number(data.interval);
+
+      if (
+        !Number.isInteger(intervalSeconds) ||
+        intervalSeconds <= 0 ||
+        intervalSeconds > 0xffffffff
+      ) {
+        return reject(badInput);
       }
-      if (data.typeId === 5 || data.typeId === 8 || data.typeId === 9) {
-        function Encoder(object, port) {
-          // Encode downlink messages sent as
-          // object to an array or buffer of bytes.
-          // if (port === 1) bytes[0] = object.led ? 1 : 0;
-          if (object.command && object.command == "reboot") {
-            return [0x01];
-          } else if (object.command && object.command == "txinterval") {
-            if (typeof object.value !== "number") {
-              return [];
-            }
-            console.log(object.value & 0xff);
 
-            return [
-              0x00,
-              object.value & 0xff,
-              (object.value >> 8) & 0xff,
-              (object.value >> 16) & 0xff,
-              (object.value >> 24) & 0xff,
-            ];
-          } else if (object.command == "lowbatt_threshold") {
-            if (typeof object.value !== "number") {
-              return [];
-            }
+      let encodedInterval;
 
-            return [0x02, object.value & 0xff, (object.value >> 8) & 0xff];
-          }
-
-          return [];
-        }
-
-        const encoded = Encoder({
-          command: "txinterval",
-          value: parseFloat(data.interval),
-        });
-        const buffer = Buffer.from(encoded);
-        const hexString = buffer.toString("hex");
-        intervalAlat = hexToBase64(hexString);
+      try {
+        encodedInterval =
+          encodeReportingInterval(intervalSeconds);
+      } catch (err) {
+        return reject(badInput);
       }
+
+      const payloadBase64 = encodedInterval.base64;
+
+      const devEui = String(data.devEUI).toLowerCase().trim();
+      const appId = data.applicationId || data.type;
+      const topicDown = `application/${appId}/device/${devEui}/command/down`;
+
       const client = mqtt.connect(options);
-      client.subscribe(
-        `organization/DAS/application/${data.type}/node/${data.devEUI}/tx`,
-        (err) => {
-          if (err) {
-            client.end();
-            reject(connection);
-          } else {
-            client.publish(
-              `organization/DAS/application/${data.type}/node/${data.devEUI}/tx`,
-              JSON.stringify({
-                confirmed: false,
-                devEUI: data.devEUI,
-                fPort: 113,
-                data: intervalAlat,
-              })
-            );
-            interval = setInterval(() => {
-              i++;
-              if (i == 15) {
-                reject(notfound);
-                clearInterval(interval);
-                i = 1;
-              }
-            }, 1000);
-          }
-        }
-      );
-      client.on("message", (topic, message, packet) => {
-        clearInterval(interval);
-        resolve(message.toString());
+
+      client.once("error", () => {
         client.end();
+        reject(connection);
+      });
+
+      client.once("connect", () => {
+        const mqttPayload = {
+          devEui: devEui,
+          confirmed: false,
+          fPort: 113,
+          data: payloadBase64,
+        };
+
+        console.log("Interval:", intervalSeconds);
+        console.log("Payload HEX:", encodedInterval.hex);
+        console.log("Payload Base64:", encodedInterval.base64);
+        console.log("MQTT Topic Down:", topicDown);
+
+        client.publish(
+          topicDown,
+          JSON.stringify(mqttPayload),
+          { qos: 1 },
+          (publishErr) => {
+            client.end();
+            if (publishErr) {
+              return reject(connection);
+            }
+            resolve({
+              message: "Interval downlink transmitted",
+              devEUI: data.devEUI,
+              applicationId: appId,
+              intervalSeconds,
+              payloadHex: encodedInterval.hex,
+              payloadBase64,
+              fPort: 113,
+            });
+          }
+        );
       });
     });
   },
+
+  encodeReportingInterval,
 };

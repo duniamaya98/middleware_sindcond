@@ -1,1 +1,15 @@
-/node_modules
+/node_modules/
+
+# Local secrets
+.env
+.env.*
+!.env.example
+
+# Runtime and tooling artifacts
+*.log
+*.pid
+coverage/
+.cache/
+.vscode/
+.idea/
+*.swp

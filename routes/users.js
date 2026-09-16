@@ -2,6 +2,9 @@ var express = require("express");
 var router = express.Router();
 const controllerUplink = require("../controllers/controllerUplinks");
 const controllerDownlink = require("../controllers/controllerDownlinks");
+const controllerTelemetry = require("../controllers/controllerTelemetry");
+const controllerRelay = require("../controllers/controllerRelay");
+const cs = require("../controllers/controllerChirpstack");
 const {
   controllerSubscribe,
 } = require("../controllers/V2/controllerSubscribe");
@@ -21,6 +24,35 @@ router
   .post("/pulse", controllerDownlink.setPulse)
   .post("/gateway", controllerUplink.gateway)
 
+  // ─── Telemetry ────────────────────────────────────────────────────────
+  .post("/telemetry", controllerTelemetry.getTelemetry)
+
+  // ─── Relay CL711K22 ───────────────────────────────────────────────────
+  .post("/relay", controllerRelay.relayCL711K22)
+  .post("/relay/status", controllerRelay.relayStatusCL711K22)
+  .post("/relay/wake", controllerRelay.wakeRelayCL711K22)
+
   .post("/subscribe", controllerSubscribe)
-  .post("/check/node", controllerCheckNode);
+  .post("/check/node", controllerCheckNode)
+
+  // ─── ChirpStack REST API ────────────────────────────────────────
+  // Gateway
+  .get("/chirpstack/gateways", cs.listGateways)
+  .get("/chirpstack/gateways/:gatewayId", cs.getGateway)
+  .post("/chirpstack/gateways", cs.createGateway)
+  .put("/chirpstack/gateways/:gatewayId", cs.updateGateway)
+  .delete("/chirpstack/gateways/:gatewayId", cs.deleteGateway)
+  // Device
+  .get("/chirpstack/devices", cs.listDevices)
+  .post("/chirpstack/devices", cs.createDevice)
+  .get("/chirpstack/devices/:devEui", cs.getDevice)
+  .put("/chirpstack/devices/:devEui", cs.updateDevice)
+  .delete("/chirpstack/devices/:devEui", cs.deleteDevice)
+  .get("/chirpstack/devices/:devEui/queue", cs.getDeviceQueue)
+  .post("/chirpstack/devices/:devEui/queue", cs.enqueueDownlink)
+  .delete("/chirpstack/devices/:devEui/queue", cs.flushDeviceQueue)
+  // Application
+  .get("/chirpstack/applications", cs.listApplications)
+  .get("/chirpstack/applications/:applicationId", cs.getApplication);
+
 module.exports = router;

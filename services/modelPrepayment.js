@@ -42,34 +42,49 @@ module.exports={
         
         return new Promise((resolve, reject)=>{
            
-            if (data.type==undefined || data.devEUI==undefined || data.topup==undefined) {
-                reject(empty)
+            if (data.devEUI==undefined || data.topup==undefined) {
+                return reject(empty)
             }
+            const devEui = String(data.devEUI).toLowerCase().trim()
+            const appId = data.applicationId || data.type || "4360bdb1-6cdd-4d38-b92a-ea6020ebbea0"
+            const fPort = data.fPort ? Number(data.fPort) : 112
+
             topup=parseInt(data.topup)
             topup = ('00000000' + topup.toString(16)).slice(-8)
-            topup = hex64.toBase64(topup)
+            const topupBase64 = Buffer.from(topup, 'hex').toString('base64')
 
             const client = mqtt.connect(options)
-            client.subscribe((`organization/DAS/application/${data.type}/node/${data.devEUI}/tx`),(err)=>{
+            const topicDown = `application/${appId}/device/${devEui}/command/down`
+            const topicUp = `application/${appId}/device/${devEui}/event/up`
+
+            client.subscribe(topicUp, (err)=>{
                 if (err) {
                     client.end()
-                    reject(connection);
-                }else{
-                    client.publish(`organization/DAS/application/${data.type}/node/${data.devEUI}/tx`,JSON.stringify({"confirmed":false,"devEUI":data.devEUI,"fPort":112,"data":topup}))
+                    return reject(connection);
+                } else {
+                    const payload = JSON.stringify({
+                        devEui: devEui,
+                        confirmed: true,
+                        fPort: fPort,
+                        data: topupBase64
+                    })
+
+                    client.publish(topicDown, payload, { qos: 1 })
+
                     interval=setInterval(()=>{
                         i++
-                        if(i==15) {
-                            reject(notfound);
+                        if(i==30) {
+                            client.end()
                             clearInterval(interval)
-                            i=1;
+                            reject(notfound);
                         }
                     },1000)
                 }
             })
-            client.on('message', (topic, message, packet) => {
-                clearInterval(interval)
-                resolve(message.toString())
+            client.on('message', (topic, message) => {
+                if (interval) clearInterval(interval)
                 client.end()
+                resolve(message.toString())
             });
         })
     }
