@@ -4,6 +4,8 @@
  * sehingga controller bisa pakai await tanpa urusan gRPC langsung.
  */
 
+const path = require("path");
+require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 const grpc = require("@grpc/grpc-js");
 const {
   GatewayServiceClient,
@@ -45,9 +47,9 @@ const {
   Location,
 } = require("@chirpstack/chirpstack-api/common/common_pb");
 
-const HOST = process.env.CHIRPSTACK_HOST || "localhost:8080";
-const API_KEY = process.env.CHIRPSTACK_API_KEY || "";
-const TENANT_ID = process.env.CHIRPSTACK_TENANT_ID || "";
+const HOST = (process.env.CHIRPSTACK_HOST || "localhost:8080").trim();
+const API_KEY = (process.env.CHIRPSTACK_API_KEY || "").trim();
+const TENANT_ID = (process.env.CHIRPSTACK_TENANT_ID || "").trim();
 
 // Buat metadata dari API key
 function makeMetadata() {

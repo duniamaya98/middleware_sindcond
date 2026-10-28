@@ -10,3 +10,5 @@ coverage
 .cache
 .vscode
 .idea
+tests
+scripts

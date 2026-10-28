@@ -23,6 +23,21 @@ console.log(port);
 var server = http.createServer(app);
 
 /**
+ * Disable default timeouts for long-running relay control requests.
+ *
+ * Node.js 18 defaults:
+ *   server.requestTimeout  = 300000 ms (5 min) — kills idle incoming requests
+ *   server.timeout         = 0       (none)   — kills active sockets
+ *
+ * The /api/relay/wake endpoint holds connections open for up to 10 minutes
+ * while waiting for LoRaWAN Class A meter uplinks. Without this, concurrent
+ * bulk relay requests (10 meters × 300s) trigger "fetch failed" errors.
+ */
+server.requestTimeout = 0;
+server.timeout = 0;
+server.keepAliveTimeout = 0;
+
+/**
  * Listen on provided port, on all network interfaces.
  */
 
@@ -84,7 +99,9 @@ setTimeout(() => {
 }, 120000);
 setTimeout(() => {
   console.log("start subcribe");
-  SvcSubscribeRunFirst();
+  SvcSubscribeRunFirst()
+    .then((r) => console.log("[subscribe] ok:", r))
+    .catch((err) => console.log("[subscribe] error (non-fatal):", err));
 }, 2000);
 /**
  * Event listener for HTTP server "listening" event.

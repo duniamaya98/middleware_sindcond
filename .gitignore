@@ -13,3 +13,10 @@ coverage/
 .vscode/
 .idea/
 *.swp
+
+# Test output
+/tests/output/
+
+# Internal docs (berisi IP internal & temuan keamanan, jangan dipublish)
+/docs/Audit_Kekurangan_Sistem.md
+/docs/Handoff_Summary_Agent.md

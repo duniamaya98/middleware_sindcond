@@ -5,6 +5,8 @@ const modeldownlinkmeter = require("../services/modelAdjust");
 const { Svcbrightness } = require("../services/modelbrightness");
 const { setUtc } = require("../services/modelUtc");
 const { setPulse } = require("../services/modelPulse");
+const modelRelayCL711K22 = require("../services/modelRelayCL711K22");
+const modelTelemetry = require("../services/modelTelemetry");
 const hex64 = require("hex64");
 const moment = require("moment");
 
@@ -372,4 +374,92 @@ module.exports = {
       );
   },
 
+  /**
+   * Kontrol relay CL711K22 KWH Meter
+   *
+   * POST /api/relay
+   *
+   * Body:
+   * {
+   *   "devEUI": "08000000410000e4",
+   *   "relay": 1,
+   *   "applicationId": "...",
+   *   "fPort": 102,
+   *   "confirmed": true
+   * }
+   */
+  telemetry: (req, res) => {
+    const data = req.body;
+    modelTelemetry
+      .getTelemetry(data)
+      .then((result) => sendServiceResult(res, result))
+      .catch((err) => sendServiceError(res, err));
+  },
+
+  relayCL711K22: async (
+    req,
+    res
+  ) => {
+    try {
+      const data = req.body;
+
+      console.log(
+        "[CL711K22 Controller] Relay request:",
+        data
+      );
+
+      const result =
+        await modelRelayCL711K22
+          .controlRelay(data);
+
+      return sendServiceResult(
+        res,
+        result
+      );
+    } catch (err) {
+      return sendServiceError(
+        res,
+        err
+      );
+    }
+  },
+
+  /**
+   * Cek status relay dari uplink CL711K22
+   *
+   * POST /api/relay/status
+   *
+   * Body:
+   * {
+   *   "devEUI": "08000000410000e4",
+   *   "applicationId": "..."
+   * }
+   */
+  relayStatusCL711K22: async (
+    req,
+    res
+  ) => {
+    try {
+      const data = req.body;
+
+      console.log(
+        "[CL711K22 Controller] Status request:",
+        data
+      );
+
+      const result =
+        await modelRelayCL711K22
+          .getRelayStatus(data);
+
+      return sendServiceResult(
+        res,
+        result
+      );
+    } catch (err) {
+      return sendServiceError(
+        res,
+        err
+      );
+    }
+  },
 };

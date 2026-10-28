@@ -3,7 +3,10 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon ./bin/www"
+    "start": "nodemon ./bin/www",
+    "test:relay:seq": "node tests/relay_sequential.js",
+    "test:relay:parallel": "node tests/relay_parallel.js",
+    "test:grpc:gateway": "node tests/chirpstack_grpc_gateway.js"
   },
   "dependencies": {
     "@chirpstack/chirpstack-api": "^4.19.0",

@@ -17,5 +17,8 @@ client.on("offline", () => {
   console.log("offline");
   // client.reconnect();
 });
+client.on("error", (err) => {
+  console.log("[MQTT] error:", err.message);
+});
 
 module.exports = client;

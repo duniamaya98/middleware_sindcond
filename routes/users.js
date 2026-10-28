@@ -2,8 +2,6 @@ var express = require("express");
 var router = express.Router();
 const controllerUplink = require("../controllers/controllerUplinks");
 const controllerDownlink = require("../controllers/controllerDownlinks");
-const controllerTelemetry = require("../controllers/controllerTelemetry");
-const controllerRelay = require("../controllers/controllerRelay");
 const cs = require("../controllers/controllerChirpstack");
 const {
   controllerSubscribe,
@@ -24,13 +22,9 @@ router
   .post("/pulse", controllerDownlink.setPulse)
   .post("/gateway", controllerUplink.gateway)
 
-  // ─── Telemetry ────────────────────────────────────────────────────────
-  .post("/telemetry", controllerTelemetry.getTelemetry)
-
-  // ─── Relay CL711K22 ───────────────────────────────────────────────────
-  .post("/relay", controllerRelay.relayCL711K22)
-  .post("/relay/status", controllerRelay.relayStatusCL711K22)
-  .post("/relay/wake", controllerRelay.wakeRelayCL711K22)
+  .post("/telemetry", controllerDownlink.telemetry)
+  .post("/relay", controllerDownlink.relayCL711K22)
+  .post("/relay/status", controllerDownlink.relayStatusCL711K22)
 
   .post("/subscribe", controllerSubscribe)
   .post("/check/node", controllerCheckNode)
